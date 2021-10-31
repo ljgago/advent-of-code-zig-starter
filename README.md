@@ -46,10 +46,11 @@ For example:
 
 Folder structure:
 
-    └── day01
-       ├── day01.zig
-       ├── input.txt
-       └── README.md
+    └── src
+        └── day01
+            ├── day01.zig
+            ├── input.txt
+            └── README.md
 
 Happy coding!
 
