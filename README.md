@@ -1,6 +1,6 @@
 # Advent of Code Zig Starter
 
-A tamplate for [Advent of Code](https://adventofcode.com) write in Zig.
+A template for [Advent of Code](https://adventofcode.com) write in Zig.
 
 - [Day 1](src/day01)
 - [Day 2](src/day02)
