@@ -8,8 +8,8 @@ const Allocator = std.mem.Allocator;
 // -----------------------
 
 pub fn solve(alloc: Allocator, comptime input: []const u8) !i32 {
-    _ = alloc.ptr;
-    _ = input.ptr;
+    _ = alloc;
+    _ = input;
 
     return 0;
 }

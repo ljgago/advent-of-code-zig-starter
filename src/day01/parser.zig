@@ -8,9 +8,7 @@ const Allocator = std.mem.Allocator;
 // ---------------------
 
 pub fn parse(alloc: Allocator, comptime input: []const u8) !i32 {
-    // INFO: added this only to use alloc
-    const tmp = try std.fmt.allocPrint(alloc, "parse", .{});
-    alloc.free(tmp);
+    _ = alloc;
 
     const result = std.mem.trim(u8, input, "\n");
 
@@ -21,11 +19,11 @@ pub fn parse(alloc: Allocator, comptime input: []const u8) !i32 {
 // --- Parser: Test ---
 // --------------------
 
-test "day01 parser" {
+test "day01: parser" {
     const testing = std.testing;
     const alloc = testing.allocator;
 
-    const input = "0";
+    const input = "0\n";
     const result = try parse(alloc, input);
     try testing.expectEqual(0, result);
 }

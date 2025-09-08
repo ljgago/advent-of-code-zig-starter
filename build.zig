@@ -1,4 +1,7 @@
 const std = @import("std");
+const Allocator = std.mem.Allocator;
+
+const time = @import("command/lib/time.zig");
 
 pub fn build(b: *std.Build) !void {
     // Standard target options allows the person running `zig build` to choose
@@ -11,6 +14,40 @@ pub fn build(b: *std.Build) !void {
     // between Debug, ReleaseSafe, ReleaseFast, and ReleaseSmall. Here we do not
     // set a preferred release mode, allowing the user to decide how to optimize.
     const optimize = b.standardOptimizeOption(.{});
+
+    const now = time.getCurrentEST();
+    const year_args = b.option([]const u8, "year", "The year of the Advent of Code challenge") orelse b.fmt("{d}", .{now.year});
+    const day_args = b.option([]const u8, "day", "The day of the Advent of Code challenge") orelse b.fmt("{d}", .{now.day});
+
+    // Generate command
+    const generate_exe = b.addExecutable(.{
+        .name = "generate",
+        .root_module = b.createModule(.{
+            .root_source_file = b.path("command/generate.zig"),
+            .target = target,
+            .optimize = optimize,
+        }),
+    });
+
+    const generate_step = b.step("generate", "Generate files with a specific day");
+    const generate_cmd = b.addRunArtifact(generate_exe);
+    generate_cmd.addArgs(&.{ year_args, day_args });
+    generate_step.dependOn(&generate_cmd.step);
+
+    // Fetch command
+    const fetch_exe = b.addExecutable(.{
+        .name = "fetch",
+        .root_module = b.createModule(.{
+            .root_source_file = b.path("command/fetch.zig"),
+            .target = target,
+            .optimize = optimize,
+        }),
+    });
+
+    const fetch_step = b.step("fetch", "Fetch puzzle with year and day");
+    const fetch_cmd = b.addRunArtifact(fetch_exe);
+    fetch_cmd.addArgs(&.{ year_args, day_args });
+    fetch_step.dependOn(&fetch_cmd.step);
 
     for (1..26) |day| {
         const day_name = b.fmt("day{:0>2}", .{day});
