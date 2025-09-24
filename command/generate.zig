@@ -1,7 +1,7 @@
 //! Generates the files
 //!
 //! Used with the build system:
-//!   $ zig build generate -Dday=1
+//!   $ zig build generate -Dyear=2024 -Dday=1
 //!
 
 const std = @import("std");
@@ -45,7 +45,7 @@ pub fn main() !void {
 }
 
 const MAIN_TEMPLATE =
-    \\//! --- Advent of Code: Day X ---
+    \\//! --- Advent of Code: Day {{day}} ---
     \\
     \\const std = @import("std");
     \\const print = std.debug.print;
@@ -74,7 +74,7 @@ const MAIN_TEMPLATE =
 ;
 
 const PART_ONE_TEMPLATE =
-    \\//! --- Day X: Part One ---
+    \\//! --- Day {{day}}: Part One ---
     \\
     \\const std = @import("std");
     \\const Allocator = std.mem.Allocator;
@@ -83,7 +83,7 @@ const PART_ONE_TEMPLATE =
     \\// --- Part One: Solve ---
     \\// -----------------------
     \\
-    \\pub fn solve(alloc: Allocator, comptime input: []const u8) !i32 {
+    \\pub fn solve(alloc: Allocator, input: []const u8) !i32 {
     \\    _ = alloc;
     \\    _ = input;
     \\
@@ -94,7 +94,7 @@ const PART_ONE_TEMPLATE =
     \\// --- Part One: Test ---
     \\// ----------------------
     \\
-    \\test "dayXX: solve" {
+    \\test "day{{day_full}}: solve" {
     \\    const testing = std.testing;
     \\    const alloc = testing.allocator;
     \\
@@ -105,7 +105,7 @@ const PART_ONE_TEMPLATE =
 ;
 
 const PART_TWO_TEMPLATE =
-    \\//! --- Day X: Part Two ---
+    \\//! --- Day {{day}}: Part Two ---
     \\
     \\const std = @import("std");
     \\const Allocator = std.mem.Allocator;
@@ -114,7 +114,7 @@ const PART_TWO_TEMPLATE =
     \\// --- Part Two: Solve ---
     \\// -----------------------
     \\
-    \\pub fn solve(alloc: Allocator, comptime input: []const u8) !i32 {
+    \\pub fn solve(alloc: Allocator, input: []const u8) !i32 {
     \\    _ = alloc;
     \\    _ = input;
     \\
@@ -125,7 +125,7 @@ const PART_TWO_TEMPLATE =
     \\// --- Part Two: Test ---
     \\// ----------------------
     \\
-    \\test "dayXX: solve" {
+    \\test "day{{day_full}}: solve" {
     \\    const testing = std.testing;
     \\    const alloc = testing.allocator;
     \\
@@ -136,7 +136,7 @@ const PART_TWO_TEMPLATE =
 ;
 
 const PARSER_TEMPLATE =
-    \\//! --- Parser ---
+    \\//! --- Day {{day}}: Parser ---
     \\
     \\const std = @import("std");
     \\const Allocator = std.mem.Allocator;
@@ -145,7 +145,7 @@ const PARSER_TEMPLATE =
     \\// --- Parser: Parse ---
     \\// ---------------------
     \\
-    \\pub fn parse(alloc: Allocator, comptime input: []const u8) !i32 {
+    \\pub fn parse(alloc: Allocator, input: []const u8) !i32 {
     \\    _ = alloc;
     \\
     \\    const result = std.mem.trim(u8, input, "\n");
@@ -157,7 +157,7 @@ const PARSER_TEMPLATE =
     \\// --- Parser: Test ---
     \\// --------------------
     \\
-    \\test "dayXX: parser" {
+    \\test "day{{day_full}}: parser" {
     \\    const testing = std.testing;
     \\    const alloc = testing.allocator;
     \\
@@ -168,7 +168,7 @@ const PARSER_TEMPLATE =
 ;
 
 const README_TEMPLATE =
-    \\# Advent of Code: Day X
+    \\# Advent of Code: Day {{day}}
     \\
     \\## Part One
     \\
@@ -199,7 +199,10 @@ fn generateFiles(alloc: Allocator, day: u32) !void {
     };
 
     for (filenames, templates) |filename, template| {
-        try fs.saveFile(filename, template);
+        const parsed_template = try parse_template(alloc, template, day);
+        defer alloc.free(parsed_template);
+
+        try fs.saveFile(filename, parsed_template);
         defer alloc.free(filename);
     }
 }
@@ -221,4 +224,18 @@ fn generatePuzzle(alloc: Allocator, year: u32, day: u32, session: []const u8) !v
     }
 
     try fs.saveFile(filename, puzzle.body);
+}
+
+fn parse_template(alloc: Allocator, template: []const u8, day: u32) ![]const u8 {
+    const day_var = try std.fmt.allocPrint(alloc, "{d}", .{day});
+    defer alloc.free(day_var);
+
+    const day_full_var = try std.fmt.allocPrint(alloc, "{:0>2}", .{day});
+    defer alloc.free(day_full_var);
+
+    const template_step1 = std.mem.replaceOwned(u8, alloc, template, "{{day}}", day_var) catch @panic("out of memory");
+    defer alloc.free(template_step1);
+    const template_end = std.mem.replaceOwned(u8, alloc, template_step1, "{{day_full}}", day_full_var) catch @panic("out of memory");
+
+    return template_end;
 }

@@ -1,4 +1,4 @@
-//! --- Parser ---
+//! --- Day 1: Parser ---
 
 const std = @import("std");
 const Allocator = std.mem.Allocator;
@@ -7,7 +7,7 @@ const Allocator = std.mem.Allocator;
 // --- Parser: Parse ---
 // ---------------------
 
-pub fn parse(alloc: Allocator, comptime input: []const u8) !i32 {
+pub fn parse(alloc: Allocator, input: []const u8) !i32 {
     _ = alloc;
 
     const result = std.mem.trim(u8, input, "\n");

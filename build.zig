@@ -98,7 +98,7 @@ pub fn build(b: *std.Build) !void {
         test_step.dependOn(&part_two_cmd.step);
 
         // Add the install steps
-        const install_step = b.step(b.fmt("install-{s}", .{day_name}), b.fmt("Install the {s} in zig-out/bin", .{day_name}));
+        const install_step = b.step(b.fmt("{s}-install", .{day_name}), b.fmt("Install the {s} in zig-out/bin", .{day_name}));
         const install_cmd = b.addInstallArtifact(exe, .{});
         install_step.dependOn(&install_cmd.step);
     }

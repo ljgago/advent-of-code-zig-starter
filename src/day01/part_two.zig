@@ -7,7 +7,7 @@ const Allocator = std.mem.Allocator;
 // --- Part Two: Solve ---
 // -----------------------
 
-pub fn solve(alloc: Allocator, comptime input: []const u8) !i32 {
+pub fn solve(alloc: Allocator, input: []const u8) !i32 {
     _ = alloc;
     _ = input;
 

@@ -101,7 +101,7 @@ You can run, test or install the challenge using the `dayXX-run`, `dayXX-test` a
     $ zig build day01-run
 
     # only test the day02
-    $ zig build day02-test
+    $ zig build day02-test --summary all
 
     # only install the day03
     $ zing build day03-install
@@ -109,12 +109,14 @@ You can run, test or install the challenge using the `dayXX-run`, `dayXX-test` a
 Also, you can execute the `run` and `test` commands in watch mode:
 
     # only test the day02
-    $ zig build --watch day02-test
+    $ zig build --watch day02-test --summary all
 
     Build Summary: 5/5 steps succeeded; 2/2 tests passed
     day02-test success
-    ├─ run test day02 part_one 1 passed 261us MaxRSS:2M
-    └─ run test day02 part_two 1 passed 249us MaxRSS:2M
+    ├─ run test day02 part_one 1 passed 380us MaxRSS:2M
+    │  └─ compile test day02 part_one Debug native success 506ms MaxRSS:119M
+    └─ run test day02 part_two 1 passed 426us MaxRSS:2M
+       └─ compile test day02 part_two Debug native success 504ms MaxRSS:119M
 
 Folder structure:
 
